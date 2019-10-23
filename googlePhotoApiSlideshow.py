@@ -71,21 +71,24 @@ def ConnectToGoogleImages():
     try:
         SCOPES = 'https://www.googleapis.com/auth/photoslibrary.readonly'
         gdriveservice = None
-        credsFileName = 'mycredsnew.txt'
+        credsFileName = 'mycreds.txt'
         store = file.Storage(credsFileName)
         creds = store.get()
         if not creds or creds.invalid:
+            if not pygame.display.iconify():
+                #pygame.display.toggle_fullscreen()
+                disp = pygame.display.set_mode((int(display_width/8),int(display_height/8)), pygame.HWSURFACE|pygame.DOUBLEBUF|pygame.RESIZABLE)
             flow = client.flow_from_clientsecrets('client_secrets.json', SCOPES)
             parser = argparse.ArgumentParser(add_help=False)
             parser.add_argument('--logging_level', default='ERROR')
             parser.add_argument('--noauth_local_webserver', action='store_true',
                 default=True, help='Do not run a local web server.')
             args = parser.parse_args([])
-    
             creds = tools.run_flow(flow, store, args)
             gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()))
             credentials_file = open(credsFileName, 'wb')
-            store.put(credsFileName)
+            store.put(creds)
+            disp = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         else:
             gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()))
         album_results = gdriveservice.albums().list(pageSize=20).execute()
