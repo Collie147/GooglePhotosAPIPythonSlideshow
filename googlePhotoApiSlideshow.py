@@ -85,12 +85,12 @@ def ConnectToGoogleImages():
                 default=True, help='Do not run a local web server.')
             args = parser.parse_args([])
             creds = tools.run_flow(flow, store, args)
-            gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()))
+            gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()), static_discovery=False)
             credentials_file = open(credsFileName, 'wb')
             store.put(creds)
             disp = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
         else:
-            gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()))
+            gdriveservice = build('photoslibrary', 'v1', http=creds.authorize(Http()), static_discovery=False)
         album_results = gdriveservice.albums().list(pageSize=20).execute()
         album_items = album_results.get('albums', [])
         album_id_array = []
